@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASSERTIO | Faith That Speaks</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        assertioBlack: '#000000',
+                        assertioYellow: '#FFD43B',
+                        assertioGray: '#5A5A5A',
+                        assertioWhite: '#FFFFFF',
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFD43B;
+            border-radius: 4px;
+        }
+
+        /* Utilities */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+            color: transparent;
+        }
+        
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+        }
+        .btn-primary:hover::after {
+            left: 100%;
+        }
+
+        /* SPA Transition Curtain */
+        .page-transition-curtain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #FFD43B;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Initially present to cover load */
+            transform: translateY(0%); 
+        }
+        
+        .curtain-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 3rem;
+            color: black;
+            opacity: 0;
+        }
+
+        /* Page Container Logic */
+        .page-view {
+            display: none; /* Hidden by default */
+            min-height: 100vh;
+            padding-top: 80px; /* Space for fixed header */
+            opacity: 0; /* Ready for fade in */
+            transition: opacity 0.5s ease;
+        }
+        
+        .page-view.active {
+            display: block;
+            opacity: 1 !important; /* CRITICAL FIX: Forces visibility */
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Mobile Menu */
+        #mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-assertioYellow selection:text-assertioBlack">
+
+    <!-- Transition Curtain -->
+    <div class="page-transition-curtain">
+        <div class="curtain-logo" style="opacity: 1;">ASSERTIO</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-assertioBlack/90 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 cursor-pointer" onclick="navigateTo('home')">
+                    <span class="font-heading font-extrabold text-2xl tracking-tighter text-white">
+                        ASSERTIO<span class="text-assertioYellow">.</span>
+                    </span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <button onclick="navigateTo('home')" class="nav-link text-white hover:text-assertioYellow px-3 py-2 rounded-md text-sm font-medium font-heading transition-colors">HOME</button>
+                        <button onclick="navigateTo('services')" class="nav-link text-gray-300 hover:text-assertioYellow px-3 py-2 rounded-md text-sm font-medium font-heading transition-colors">SERVICES</button>
+                        <button onclick="navigateTo('work')" class="nav-link text-gray-300 hover:text-assertioYellow px-3 py-2 rounded-md text-sm font-medium font-heading transition-colors">WORK</button>
+                        <button onclick="navigateTo('process')" class="nav-link text-gray-300 hover:text-assertioYellow px-3 py-2 rounded-md text-sm font-medium font-heading transition-colors">PROCESS</button>
+                        <button onclick="navigateTo('contact')" class="bg-assertioYellow text-assertioBlack hover:bg-white px-5 py-2 rounded-none font-bold text-sm font-heading transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">START PROJECT</button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 text-assertioYellow hover:text-white focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-assertioBlack flex flex-col justify-center items-center md:hidden">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-white text-3xl">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="space-y-8 text-center flex flex-col">
+            <button onclick="navigateTo('home'); toggleMobileMenu()" class="text-3xl font-heading font-bold text-white hover:text-assertioYellow">HOME</button>
+            <button onclick="navigateTo('services'); toggleMobileMenu()" class="text-3xl font-heading font-bold text-white hover:text-assertioYellow">SERVICES</button>
+            <button onclick="navigateTo('work'); toggleMobileMenu()" class="text-3xl font-heading font-bold text-white hover:text-assertioYellow">WORK</button>
+            <button onclick="navigateTo('process'); toggleMobileMenu()" class="text-3xl font-heading font-bold text-white hover:text-assertioYellow">PROCESS</button>
+            <button onclick="navigateTo('contact'); toggleMobileMenu()" class="text-3xl font-heading font-bold text-assertioYellow hover:text-white">CONTACT</button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main id="app-container" class="relative">
+
+        <!-- PAGE 1: HOME -->
+        <section id="home" class="page-view">
+            <!-- Hero -->
+            <div class="relative min-h-[90vh] flex items-center overflow-hidden">
+                <!-- Background visual -->
+                <div class="absolute right-0 top-0 w-full md:w-1/2 h-full opacity-30 md:opacity-50">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Branding" class="w-full h-full object-cover grayscale">
+                    <div class="absolute inset-0 bg-gradient-to-l from-transparent to-assertioBlack"></div>
+                </div>
+
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                    <div class="max-w-3xl">
+                        <h1 class="text-5xl md:text-7xl font-heading font-extrabold leading-tight mb-6 gs-reveal">
+                            A FAITH THAT <span class="text-assertioYellow">SPEAKS.</span>
+                        </h1>
+                        <p class="text-lg md:text-xl font-sans text-gray-300 mb-8 max-w-2xl gs-reveal">
+                            ASSERTIO helps businesses turn their identity into bold, reliable branded items — apparel, corporate gifts, and brand visuals that actually represent who you are.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 gs-reveal">
+                            <a href="https://wa.me/2348101622009" target="_blank" class="btn-primary bg-assertioYellow text-assertioBlack px-8 py-4 font-heading font-bold text-lg inline-flex items-center justify-center gap-2">
+                                <i class="fab fa-whatsapp text-xl"></i> Chat on WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What We Do -->
+            <div class="py-20 bg-neutral-900 border-t border-white/5">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 class="text-assertioYellow font-heading font-bold text-sm tracking-widest uppercase mb-2 gs-reveal">WHAT ASSERTIO DOES</h2>
+                            <h3 class="text-3xl md:text-4xl font-heading font-bold mb-6 text-white gs-reveal">We help businesses look like businesses.</h3>
+                            <ul class="space-y-6 font-sans text-gray-300 gs-reveal">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-assertioYellow mt-1 mr-4"></i>
+                                    <span><strong>Branded apparel</strong> for teams, events, and organisations.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-assertioYellow mt-1 mr-4"></i>
+                                    <span><strong>Corporate gifts</strong> that keep your brand visible and respected.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-assertioYellow mt-1 mr-4"></i>
+                                    <span><strong>Brand identity & strategy</strong> that ties everything together.</span>
+                                </li>
+                            </ul>
+                            <p class="mt-8 text-white italic border-l-4 border-assertioYellow pl-4 gs-reveal">
+                                No guesswork. No random designs. Just clear, consistent branding you can wear, hold, and share.
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="glass-panel p-6 rounded-lg text-center transform hover:-translate-y-2 transition-transform duration-300">
+                                <i class="fas fa-tshirt text-4xl text-assertioYellow mb-4"></i>
+                                <h4 class="font-heading font-bold text-white">Apparel</h4>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg text-center transform hover:-translate-y-2 transition-transform duration-300">
+                                <i class="fas fa-gift text-4xl text-assertioYellow mb-4"></i>
+                                <h4 class="font-heading font-bold text-white">Gifts</h4>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg text-center transform hover:-translate-y-2 transition-transform duration-300">
+                                <i class="fas fa-pencil-ruler text-4xl text-assertioYellow mb-4"></i>
+                                <h4 class="font-heading font-bold text-white">Strategy</h4>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg text-center transform hover:-translate-y-2 transition-transform duration-300">
+                                <i class="fas fa-layer-group text-4xl text-assertioYellow mb-4"></i>
+                                <h4 class="font-heading font-bold text-white">Identity</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Who This Is For -->
+            <div class="py-20 bg-assertioBlack">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-5xl font-heading font-extrabold mb-4 text-white">WHO THIS IS FOR</h2>
+                        <p class="text-gray-400">If your brand needs to look organised, confident, and professional, you’re in the right place.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div class="border border-white/20 p-8 hover:border-assertioYellow transition-colors duration-300">
+                            <h3 class="text-xl font-heading font-bold text-white mb-2">Businesses</h3>
+                            <p class="text-gray-400 text-sm">That want their brand taken seriously.</p>
+                        </div>
+                        <div class="border border-white/20 p-8 hover:border-assertioYellow transition-colors duration-300">
+                            <h3 class="text-xl font-heading font-bold text-white mb-2">Organisations</h3>
+                            <p class="text-gray-400 text-sm">Running events, campaigns, or activations.</p>
+                        </div>
+                        <div class="border border-white/20 p-8 hover:border-assertioYellow transition-colors duration-300">
+                            <h3 class="text-xl font-heading font-bold text-white mb-2">Teams</h3>
+                            <p class="text-gray-400 text-sm">That need consistent branded items.</p>
+                        </div>
+                        <div class="border border-white/20 p-8 hover:border-assertioYellow transition-colors duration-300">
+                            <h3 class="text-xl font-heading font-bold text-white mb-2">Founders</h3>
+                            <p class="text-gray-400 text-sm">Who want clarity, not confusion.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-16 text-center">
+                        <button onclick="navigateTo('work')" class="text-white hover:text-assertioYellow border-b-2 border-assertioYellow pb-1 font-heading font-bold text-lg transition-colors">
+                            View Our Work <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: SERVICES -->
+        <section id="services" class="page-view">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h1 class="text-4xl md:text-6xl font-heading font-extrabold mb-6 text-white">WHAT WE DO</h1>
+                    <p class="text-xl text-gray-300">ASSERTIO operates at the intersection of brand clarity and physical branding. We don’t just design — we produce, customise, and deliver.</p>
+                </div>
+
+                <div class="space-y-20">
+                    <!-- Service 1 -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center bg-white/5 p-8 md:p-12 rounded-xl border border-white/5 service-item">
+                        <div class="order-2 md:order-1">
+                            <h2 class="text-assertioYellow font-heading font-bold text-2xl mb-2">01. BRANDED APPAREL</h2>
+                            <h3 class="text-white font-heading font-bold text-3xl mb-4">Make your team and events instantly recognisable.</h3>
+                            <p class="text-gray-400 mb-6">We produce high-quality branded apparel designed for real use and real visibility.</p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-8">
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">T-shirts</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Polos</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Hoodies</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Caps</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Uniforms</span>
+                            </div>
+
+                            <a href="https://wa.me/2348101622009?text=Hi%20Assertio,%20I%20am%20interested%20in%20Branded%20Apparel." target="_blank" class="inline-block bg-white text-black hover:bg-assertioYellow font-heading font-bold py-3 px-6 transition-colors">
+                                Get Apparel Quote
+                            </a>
+                        </div>
+                        <div class="order-1 md:order-2 h-64 md:h-full min-h-[300px] bg-cover bg-center rounded-lg transition-all duration-500" style="background-image: url('./shirt1.jpg');"></div>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center bg-white/5 p-8 md:p-12 rounded-xl border border-white/5 service-item">
+                         <div class="h-64 md:h-full min-h-[300px] bg-cover bg-center rounded-lg transition-all duration-500" style="background-image: url('./mug1.jpg');"></div>
+                        <div>
+                            <h2 class="text-assertioYellow font-heading font-bold text-2xl mb-2">02. CORPORATE GIFTS</h2>
+                            <h3 class="text-white font-heading font-bold text-3xl mb-4">Keep your brand in people’s hands — and minds.</h3>
+                            <p class="text-gray-400 mb-6">We supply branded items that feel intentional, not disposable.</p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-8">
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Mugs</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Pens</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Tote Bags</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">Journals</span>
+                                <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white">USB Drives</span>
+                            </div>
+
+                            <a href="https://wa.me/2348101622009?text=Hi%20Assertio,%20I%20am%20interested%20in%20Corporate%20Gifts." target="_blank" class="inline-block bg-white text-black hover:bg-assertioYellow font-heading font-bold py-3 px-6 transition-colors">
+                                Get Gifts Quote
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Service 3 -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center bg-white/5 p-8 md:p-12 rounded-xl border border-white/5 service-item">
+                        <div class="order-2 md:order-1">
+                            <h2 class="text-assertioYellow font-heading font-bold text-2xl mb-2">03. IDENTITY & STRATEGY</h2>
+                            <h3 class="text-white font-heading font-bold text-3xl mb-4">So everything you print actually makes sense.</h3>
+                            <p class="text-gray-400 mb-6">For businesses that need structure before scale. Visual identity, brand direction, and consistency.</p>
+                            
+                            <a href="https://wa.me/2348101622009?text=Hi%20Assertio,%20I%20need%20help%20with%20Brand%20Identity%20Strategy." target="_blank" class="inline-block bg-white text-black hover:bg-assertioYellow font-heading font-bold py-3 px-6 transition-colors">
+                                Discuss Strategy
+                            </a>
+                        </div>
+                        <div class="order-1 md:order-2 h-64 md:h-full min-h-[300px] bg-cover bg-center rounded-lg transition-all duration-500" style="background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');"></div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-20">
+                    <a href="https://wa.me/2348101622009" class="btn-primary bg-assertioYellow text-black px-10 py-5 font-heading font-bold text-xl rounded shadow-lg">
+                        Start a Project on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: WORK -->
+        <section id="work" class="page-view">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl md:text-6xl font-heading font-extrabold mb-4 text-white">REAL WORK.</h1>
+                    <p class="text-xl text-gray-300">Every project starts with clarity — purpose, audience, and use — before production.</p>
+                </div>
+
+                <!-- Portfolio Grid -->
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div class="group relative overflow-hidden rounded-lg">
+                        <img src="shirt3.jpg" alt="Event Apparel" class="w-full h-96 object-cover transition-all duration-500 transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/40 opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                            <h3 class="text-assertioYellow font-heading font-bold text-xl">Event Apparel</h3>
+                            <p class="text-white text-sm">Custom T-shirts for conferences and team activations.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="group relative overflow-hidden rounded-lg">
+                        <img src="cap1.jpg" alt="Corporate Branding" class="w-full h-96 object-cover  transition-all duration-500 transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/40 opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                            <h3 class="text-assertioYellow font-heading font-bold text-xl">Corporate Branding</h3>
+                            <p class="text-white text-sm">Caps, shirts, and printed materials for business identity.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="group relative overflow-hidden rounded-lg">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Campaign Materials" class="w-full h-96 object-cover transition-all duration-500 transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/40 opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                            <h3 class="text-assertioYellow font-heading font-bold text-xl">Campaign Materials</h3>
+                            <p class="text-white text-sm">Flyers, banners, and branded items for launches.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-20 flex justify-center">
+                    <div class="bg-white/5 p-8 border-l-4 border-assertioYellow max-w-2xl text-center">
+                        <p class="font-heading font-bold text-white text-lg mb-4">"That’s why our work feels intentional."</p>
+                        <button onclick="navigateTo('contact')" class="text-assertioYellow hover:text-white font-bold uppercase tracking-widest text-sm border-b border-assertioYellow pb-1">Let's Do This for Your Brand</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 4: PROCESS -->
+        <section id="process" class="page-view">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                <div class="grid md:grid-cols-2 gap-16">
+                    <div>
+                        <h1 class="text-4xl md:text-6xl font-heading font-extrabold mb-8 text-white">HOW IT WORKS</h1>
+                        <p class="text-lg text-gray-300 mb-12">No surprises. No confusion. A simple, structured process to get you from idea to delivery.</p>
+                        
+                        <!-- Timeline -->
+                        <div class="relative border-l border-white/20 ml-3 space-y-12">
+                            <div class="pl-8 relative">
+                                <span class="absolute -left-3 top-1 w-6 h-6 bg-assertioYellow rounded-full border-4 border-black"></span>
+                                <h3 class="text-xl font-heading font-bold text-white">1. Conversation</h3>
+                                <p class="text-gray-400 mt-2">You tell us what you need, who it’s for, and your timeline.</p>
+                            </div>
+                            <div class="pl-8 relative">
+                                <span class="absolute -left-3 top-1 w-6 h-6 bg-assertioYellow rounded-full border-4 border-black"></span>
+                                <h3 class="text-xl font-heading font-bold text-white">2. Direction & Mockup</h3>
+                                <p class="text-gray-400 mt-2">We align on design, items, and quantity before production.</p>
+                            </div>
+                            <div class="pl-8 relative">
+                                <span class="absolute -left-3 top-1 w-6 h-6 bg-assertioYellow rounded-full border-4 border-black"></span>
+                                <h3 class="text-xl font-heading font-bold text-white">3. Production</h3>
+                                <p class="text-gray-400 mt-2">We handle printing, customization, and quality control.</p>
+                            </div>
+                            <div class="pl-8 relative">
+                                <span class="absolute -left-3 top-1 w-6 h-6 bg-assertioYellow rounded-full border-4 border-black"></span>
+                                <h3 class="text-xl font-heading font-bold text-white">4. Delivery</h3>
+                                <p class="text-gray-400 mt-2">You receive branded items ready to use.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-neutral-900 p-10 rounded-xl border border-white/5 h-fit">
+                        <h2 class="text-assertioYellow font-heading font-bold text-2xl mb-6">WHY ASSERTIO?</h2>
+                        <ul class="space-y-4">
+                            <li class="flex items-center text-white"><i class="fas fa-check-circle text-assertioYellow mr-3"></i> Clear communication</li>
+                            <li class="flex items-center text-white"><i class="fas fa-check-circle text-assertioYellow mr-3"></i> Consistent quality</li>
+                            <li class="flex items-center text-white"><i class="fas fa-check-circle text-assertioYellow mr-3"></i> Affordable without feeling cheap</li>
+                            <li class="flex items-center text-white"><i class="fas fa-check-circle text-assertioYellow mr-3"></i> Branding that actually represents you</li>
+                        </ul>
+                        
+                        <div class="mt-10 pt-10 border-t border-white/10">
+                            <h4 class="text-xs uppercase tracking-widest text-gray-500 mb-2">Governance Statement</h4>
+                            <p class="text-sm text-gray-300 italic">All ASSERTIO projects follow strict brand consistency and quality review. We do not compromise identity for speed or volume.</p>
+                        </div>
+                        
+                        <a href="https://wa.me/2348101622009" class="block w-full text-center mt-8 bg-white hover:bg-assertioYellow text-black font-heading font-bold py-4 transition-colors">
+                            Chat With ASSERTIO
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 5: CONTACT -->
+        <section id="contact" class="page-view">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 flex flex-col items-center justify-center min-h-[80vh]">
+                <div class="w-full max-w-2xl">
+                    <div class="text-center mb-10">
+                        <h1 class="text-4xl md:text-5xl font-heading font-extrabold mb-4 text-white">START THE CONVERSATION.</h1>
+                        <p class="text-gray-300">You don’t need everything figured out. We’ll help you structure the rest.</p>
+                    </div>
+
+                    <div class="bg-neutral-900 p-8 md:p-12 rounded-xl shadow-2xl border border-white/10">
+                        <form id="whatsappForm" onsubmit="sendToWhatsApp(event)" class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-sm font-bold text-gray-400 mb-2 uppercase">Name</label>
+                                <input type="text" id="name" required class="w-full bg-black border border-white/20 text-white p-4 rounded focus:outline-none focus:border-assertioYellow transition-colors" placeholder="Your Name or Company">
+                            </div>
+
+                            <div>
+                                <label for="serviceType" class="block text-sm font-bold text-gray-400 mb-2 uppercase">I am interested in</label>
+                                <select id="serviceType" class="w-full bg-black border border-white/20 text-white p-4 rounded focus:outline-none focus:border-assertioYellow transition-colors">
+                                    <option value="General Inquiry">General Inquiry</option>
+                                    <option value="Branded Apparel">Branded Apparel (T-shirts, Caps, etc)</option>
+                                    <option value="Corporate Gifts">Corporate Gifts (Mugs, Pens, etc)</option>
+                                    <option value="Brand Strategy">Brand Identity & Strategy</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="message" class="block text-sm font-bold text-gray-400 mb-2 uppercase">Message (Optional)</label>
+                                <textarea id="message" rows="3" class="w-full bg-black border border-white/20 text-white p-4 rounded focus:outline-none focus:border-assertioYellow transition-colors" placeholder="Tell us a bit about your needs..."></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-assertioYellow hover:bg-white text-black font-heading font-extrabold text-lg py-4 rounded transition-all transform hover:scale-[1.01]">
+                                <i class="fab fa-whatsapp mr-2"></i> SEND VIA WHATSAPP
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="text-center mt-10">
+                        <p class="text-gray-500 text-sm">Or call us directly</p>
+                        <p class="text-white font-heading font-bold text-xl mt-1">+234 810 162 2009</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-neutral-900 border-t border-white/5 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <span class="font-heading font-extrabold text-2xl tracking-tighter text-white block mb-4">
+                ASSERTIO<span class="text-assertioYellow">.</span>
+            </span>
+            <p class="text-gray-500 text-sm">&copy; 2026 ASSERTIO. All Rights Reserved.</p>
+            <span class="adekani-credit">Built by <a href="https://adekani.com.ng" target="_blank">Adekani</a></span>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        let currentPage = 'home';
+        const pages = ['home', 'services', 'work', 'process', 'contact'];
+
+        // --- Navigation Logic ---
+        function navigateTo(pageId) {
+            if (pageId === currentPage) return;
+            
+            // 1. Curtain Animation
+            const tl = gsap.timeline();
+            const curtain = document.querySelector('.page-transition-curtain');
+            const curtainLogo = document.querySelector('.curtain-logo');
+
+            // Slide curtain UP
+            tl.to(curtain, {
+                y: '0%',
+                duration: 0.5,
+                ease: 'power4.inOut',
+                onComplete: () => {
+                    // Swap Content while covered
+                    document.querySelectorAll('.page-view').forEach(el => {
+                        el.classList.remove('active');
+                        // Reset animations on leaving pages
+                        gsap.set(el.querySelectorAll('h1, h2, h3, p, li, .btn-primary, .grid > div, .service-item'), { opacity: 0, y: 30 });
+                    });
+                    
+                    const newPage = document.getElementById(pageId);
+                    newPage.classList.add('active');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                    
+                    // Update state
+                    currentPage = pageId;
+
+                    // Trigger animations for new page
+                    animatePageContent(pageId);
+                }
+            })
+            // Show Logo briefly
+            .to(curtainLogo, { opacity: 1, duration: 0.2, y: 0 })
+            .to(curtainLogo, { opacity: 0, duration: 0.2, delay: 0.2 })
+            // Slide Curtain AWAY (Upwards)
+            .to(curtain, {
+                y: '-100%',
+                duration: 0.5,
+                ease: 'power4.inOut'
+            })
+            .set(curtain, { y: '100%' }); // Reset position for next time
+        }
+
+        // --- Page Specific Animations ---
+        function animatePageContent(pageId) {
+            const page = document.getElementById(pageId);
+            const elements = page.querySelectorAll('h1, h2, h3, p, li, .btn-primary, .grid > div, .service-item');
+            
+            // Ensure container is visible
+            page.style.opacity = 1;
+
+            // Staggered reveal
+            gsap.to(elements, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.05,
+                ease: 'power2.out',
+                delay: 0.1
+            });
+        }
+
+        // --- Mobile Menu ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+        }
+
+        // --- WhatsApp Logic ---
+        function sendToWhatsApp(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const service = document.getElementById('serviceType').value;
+            const message = document.getElementById('message').value;
+            
+            // Construct the message
+            let finalMsg = `Hello ASSERTIO, my name is ${name}.`;
+            finalMsg += ` I am interested in ${service}.`;
+            
+            if(message) {
+                finalMsg += ` Message: ${message}`;
+            }
+
+            // Encode for URL
+            const encodedMsg = encodeURIComponent(finalMsg);
+            const phone = "2348101622009";
+            
+            // Open WhatsApp
+            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+        }
+
+        // --- Init ---
+        window.addEventListener('load', () => {
+            // Force home to be visible immediately but covered by curtain
+            const home = document.getElementById('home');
+            home.classList.add('active');
+            
+            // Animate curtain away
+            const tl = gsap.timeline();
+            
+            tl.to('.curtain-logo', { opacity: 0, duration: 0.5, delay: 0.5 })
+              .to('.page-transition-curtain', { 
+                  y: '-100%', 
+                  duration: 0.8, 
+                  ease: 'power4.inOut',
+                  onComplete: () => {
+                      document.querySelector('.page-transition-curtain').style.transform = "translateY(100%)";
+                      animatePageContent('home');
+                  }
+              });
+        });
+
+    </script>
+</body>
+</html>
