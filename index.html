@@ -153,10 +153,12 @@
             <div class="flex items-center justify-between h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 cursor-pointer" onclick="navigateTo('home')">
-                    <span class="font-heading font-extrabold text-2xl tracking-tighter text-white">
-                        ASSERTIO<span class="text-assertioYellow">.</span>
-                    </span>
-                </div>
+    <img 
+        src="logo.png"
+        alt="Assertio Logo"
+        class="h-8 w-auto"
+    >
+</div>
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
@@ -209,7 +211,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
                     <div class="max-w-3xl">
                         <h1 class="text-5xl md:text-7xl font-heading font-extrabold leading-tight mb-6 gs-reveal">
-                            A FAITH THAT <span class="text-assertioYellow">SPEAKS.</span>
+                            STAND TALL WITH YOUR <span class="text-assertioYellow">BRAND.</span>
                         </h1>
                         <p class="text-lg md:text-xl font-sans text-gray-300 mb-8 max-w-2xl gs-reveal">
                             ASSERTIO helps businesses turn their identity into bold, reliable branded items — apparel, corporate gifts, and brand visuals that actually represent who you are.
@@ -284,8 +286,8 @@
                             <p class="text-gray-400 text-sm">That want their brand taken seriously.</p>
                         </div>
                         <div class="border border-white/20 p-8 hover:border-assertioYellow transition-colors duration-300">
-                            <h3 class="text-xl font-heading font-bold text-white mb-2">Organisations</h3>
-                            <p class="text-gray-400 text-sm">Running events, campaigns, or activations.</p>
+                            <h3 class="text-xl font-heading font-bold text-white mb-2">Individuals</h3>
+                            <p class="text-gray-400 text-sm">That want to boldly express their brand and who they are.</p>
                         </div>
                         <div class="border border-white/20 p-8 hover:border-assertioYellow transition-colors duration-300">
                             <h3 class="text-xl font-heading font-bold text-white mb-2">Teams</h3>
@@ -317,7 +319,8 @@
                 <div class="space-y-20">
                     <!-- Service 1 -->
                     <div class="grid md:grid-cols-2 gap-12 items-center bg-white/5 p-8 md:p-12 rounded-xl border border-white/5 service-item">
-                        <div class="order-2 md:order-1">
+                        <div class="h-64 md:h-full min-h-[300px] bg-cover bg-center rounded-lg transition-all duration-500" style="background-image: url('./shirt1.jpg');"></div>
+                        <div>
                             <h2 class="text-assertioYellow font-heading font-bold text-2xl mb-2">01. BRANDED APPAREL</h2>
                             <h3 class="text-white font-heading font-bold text-3xl mb-4">Make your team and events instantly recognisable.</h3>
                             <p class="text-gray-400 mb-6">We produce high-quality branded apparel designed for real use and real visibility.</p>
@@ -334,7 +337,6 @@
                                 Get Apparel Quote
                             </a>
                         </div>
-                        <div class="order-1 md:order-2 h-64 md:h-full min-h-[300px] bg-cover bg-center rounded-lg transition-all duration-500" style="background-image: url('./shirt1.jpg');"></div>
                     </div>
 
                     <!-- Service 2 -->
@@ -537,8 +539,9 @@
             <span class="font-heading font-extrabold text-2xl tracking-tighter text-white block mb-4">
                 ASSERTIO<span class="text-assertioYellow">.</span>
             </span>
+            <p class="text-gray-300 text-lg italic ">Faith That Speaks. <br><br> </p>
             <p class="text-gray-500 text-sm">&copy; 2026 ASSERTIO. All Rights Reserved.</p>
-            <span class="adekani-credit">Built by <a href="https://adekani.com.ng" target="_blank">Adekani</a></span>
+            <span class="text-gray-300 text-sm">Built by <a href="https://adekani.com.ng" target="_blank">Adekani</a></span>
         </div>
     </footer>
 
@@ -606,8 +609,8 @@
             gsap.to(elements, {
                 opacity: 1,
                 y: 0,
-                duration: 0.6,
-                stagger: 0.05,
+                duration: 1.0,
+                stagger: 0.5,
                 ease: 'power2.out',
                 delay: 0.1
             });
@@ -666,4 +669,4 @@
 
     </script>
 </body>
-</html>
+    </html>
